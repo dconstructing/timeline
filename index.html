@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Timeline basic demo</title>
+		<script src="https://unpkg.com/timeline-plus/dist/timeline.js"></script>
+		<link href="https://unpkg.com/timeline-plus/dist/timeline.css" rel="stylesheet" type="text/css" />
+
+		<script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+		<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+		<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+	</head>
+	<body>
+		<div id="timeline"></div>
+		<div id="react"></div>
+
+		<script type="text/javascript">
+			var container = document.getElementById('timeline');
+			var data = [
+				{id: 1, content: 'item 1', start: '2013-04-20'},
+				{id: 2, content: 'item 2', start: '2013-04-14'},
+				{id: 3, content: 'item 3', start: '2013-04-18'},
+				{id: 4, content: 'item 4', start: '2013-04-16', end: '2013-04-19'},
+				{id: 5, content: 'item 5', start: '2013-04-25'},
+				{id: 6, content: 'item 6', start: '2013-04-27'}
+			];
+			var options = {};
+			var timeline = new timeline.Timeline(container, data, options);
+		</script>
+
+		<script type="text/babel">
+			class TimelineEvent extends React.Component {
+				constructor(props) {
+					super(props);
+
+					this.datetimeChanged = this.datetimeChanged.bind(this);
+					this.noteChanged = this.noteChanged.bind(this); 
+				}
+
+				datetimeChanged(event) {
+					const updatedEvent = {
+						datetime: event.target.value,
+						note: this.props.event.note
+					}
+					this.props.onUpdate(this.props.sort, updatedEvent)
+				}
+
+				noteChanged(event) {
+					const updatedEvent = {
+						datetime: this.props.event.datetime,
+						note: event.target.value
+					}
+					this.props.onUpdate(this.props.sort, updatedEvent)
+				}
+
+				render() {
+					return (
+						<div>
+							<form>
+								<input placeholder="Datetime" value={this.props.event.datetime} onChange={this.datetimeChanged} />
+								<input placeholder="Note" value={this.props.event.note} onChange={this.noteChanged} />
+							</form>
+						</div>
+					)
+				}
+			}
+
+			function blankTimelineEvent() {
+				return {
+					datetime: '',
+					note: ''
+				}
+			}
+
+			class TimelineEvents extends React.Component {
+				constructor(props) {
+					super(props);
+					this.state = {
+						events: [],
+						newEvent: blankTimelineEvent()
+					};
+
+					this.datetimeChanged = this.datetimeChanged.bind(this);
+					this.noteChanged = this.noteChanged.bind(this); 
+					this.handleSubmit = this.handleSubmit.bind(this);
+					this.handleUpdate = this.handleUpdate.bind(this);
+				}
+
+				datetimeChanged(event) {
+					const newEvent = this.state.newEvent;
+					newEvent.datetime = event.target.value;
+					this.setState({newEvent: newEvent});
+				}
+
+				noteChanged(event) {
+					const newEvent = this.state.newEvent;
+					newEvent.note = event.target.value;
+					this.setState({newEvent: newEvent});
+				}
+
+				handleSubmit(event) {
+					console.log(this.state)
+					const eventSet = this.state.events;
+					eventSet.push(this.state.newEvent);
+					this.setState({events: eventSet, newEvent: blankTimelineEvent()});
+					event.preventDefault();
+				}
+
+				handleUpdate(sort, timelineEvent) {
+					console.log(this.state);
+					console.log(sort, timelineEvent);
+					const eventSet = this.state.events;
+					eventSet.splice(sort, 1, timelineEvent);
+					console.log(eventSet);
+					this.setState({events: eventSet});
+				}
+
+				render() {
+					const events = this.state.events.map((event, i) => <TimelineEvent key={i} sort={i} event={event} onUpdate={this.handleUpdate} />)
+					return (
+						<div>
+							{events}
+							<div>
+								<form onSubmit={this.handleSubmit}>
+									<input placeholder="Datetime" value={this.state.newEvent.datetime} onChange={this.datetimeChanged} />
+									<input placeholder="Note" value={this.state.newEvent.note} onChange={this.noteChanged} />
+									<button type="submit">Add</button>
+								</form>
+							</div>
+						</div>
+					)
+				}
+			}
+			
+			ReactDOM.render(
+				<TimelineEvents />,
+				document.getElementById('react')
+			);
+		</script>
+	</body>
+</html>
