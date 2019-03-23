@@ -10,24 +10,42 @@
 		<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 	</head>
 	<body>
-		<div id="timeline"></div>
 		<div id="react"></div>
 
-		<script type="text/javascript">
-			var container = document.getElementById('timeline');
-			var data = [
-				{id: 1, content: 'item 1', start: '2013-04-20'},
-				{id: 2, content: 'item 2', start: '2013-04-14'},
-				{id: 3, content: 'item 3', start: '2013-04-18'},
-				{id: 4, content: 'item 4', start: '2013-04-16', end: '2013-04-19'},
-				{id: 5, content: 'item 5', start: '2013-04-25'},
-				{id: 6, content: 'item 6', start: '2013-04-27'}
-			];
-			var options = {};
-			var timeline = new timeline.Timeline(container, data, options);
-		</script>
-
 		<script type="text/babel">
+			function generateChartItems(events) {
+				return events.map((event, i) => {
+					return {
+						start: event.datetime,
+						content: event.note
+					}
+				});
+			}
+
+			class Chart extends React.Component {
+				constructor(props) {
+					super(props);
+				}
+
+				componentDidMount() {
+					var container = document.getElementById('mytimeline');
+					const items = generateChartItems(this.props.events);
+					this.timeline = new timeline.Timeline(container, items, {});
+				}
+
+				shouldComponentUpdate(nextProps, nextState) {
+					console.log('checking update')
+					const items = generateChartItems(nextProps.events);
+					this.timeline.setItems(items)
+					this.timeline.redraw();
+					return false;
+				}
+
+				render() {
+					return <div id="mytimeline" />
+				}
+			}
+
 			class TimelineEvent extends React.Component {
 				constructor(props) {
 					super(props);
@@ -118,6 +136,7 @@
 					const events = this.state.events.map((event, i) => <TimelineEvent key={i} sort={i} event={event} onUpdate={this.handleUpdate} />)
 					return (
 						<div>
+							<Chart events={this.state.events} />
 							{events}
 							<div>
 								<form onSubmit={this.handleSubmit}>
