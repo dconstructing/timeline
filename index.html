@@ -5,6 +5,7 @@
 
 		<script src="https://unpkg.com/moment/moment.js"></script>
 		<script src="https://unpkg.com/timeline-plus/dist/timeline.js"></script>
+		<script src="https://unpkg.com/html2canvas/dist/html2canvas.js"></script>
 
 		<script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
 		<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
@@ -115,6 +116,7 @@
 					this.noteChanged = this.noteChanged.bind(this); 
 					this.handleSubmit = this.handleSubmit.bind(this);
 					this.handleUpdate = this.handleUpdate.bind(this);
+					this.handleExport = this.handleExport.bind(this);
 				}
 
 				datetimeChanged(datetime) {
@@ -146,11 +148,24 @@
 					this.setState({events: eventSet});
 				}
 
+				handleExport(event) {
+					const container = document.getElementById('mytimeline');
+					html2canvas(container).then(function(canvas) {
+						var link = document.createElement('a');
+						link.download = 'timeline.png';
+						canvas.toBlob(function(blob) {
+							link.href = URL.createObjectURL(blob);
+							link.click();
+						},'image/png');
+					});
+				}
+
 				render() {
 					const events = this.state.events.map((event, i) => <TimelineEvent key={i} sort={i} event={event} onUpdate={this.handleUpdate} />)
 					return (
 						<div>
 							<Chart events={this.state.events} />
+							<button onClick={this.handleExport}>Save as PNG</button>
 							<h2>Events</h2>
 							<p>Expects times in UTC</p>
 							{events}
