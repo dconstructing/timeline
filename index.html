@@ -51,6 +51,7 @@
 					const items = generateChartItems(nextProps.events);
 					this.timeline.setItems(items)
 					this.timeline.redraw();
+					this.timeline.fit(items);
 					return false;
 				}
 
