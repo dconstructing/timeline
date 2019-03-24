@@ -2,14 +2,22 @@
 <html>
 	<head>
 		<title>Timeline basic demo</title>
+
+		<script src="https://unpkg.com/moment/moment.js"></script>
 		<script src="https://unpkg.com/timeline-plus/dist/timeline.js"></script>
-		<link href="https://unpkg.com/timeline-plus/dist/timeline.css" rel="stylesheet" type="text/css" />
 
 		<script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
 		<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
 		<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+		<script src="https://unpkg.com/react-datetime/dist/react-datetime.js"></script>
+
+		<link href="https://unpkg.com/timeline-plus/dist/timeline.css" rel="stylesheet" type="text/css" />
+		<link href="https://unpkg.com/react-datetime/css/react-datetime.css" rel="stylesheet" type="text/css" />
 	</head>
 	<body>
+		<h1>Timeline Generator</h1>
+		<p>Enter your event details to automatically build a timeline. Red line represents current time in UTC.</p>
+
 		<div id="react"></div>
 
 		<script type="text/babel">
@@ -30,7 +38,12 @@
 				componentDidMount() {
 					var container = document.getElementById('mytimeline');
 					const items = generateChartItems(this.props.events);
-					this.timeline = new timeline.Timeline(container, items, {});
+					const options = {
+						moment: function(date) {
+							return timeline.moment(date).utc();
+						}
+					};
+					this.timeline = new timeline.Timeline(container, items, options);
 				}
 
 				shouldComponentUpdate(nextProps, nextState) {
@@ -54,9 +67,9 @@
 					this.noteChanged = this.noteChanged.bind(this); 
 				}
 
-				datetimeChanged(event) {
+				datetimeChanged(datetime) {
 					const updatedEvent = {
-						datetime: event.target.value,
+						datetime: datetime,
 						note: this.props.event.note
 					}
 					this.props.onUpdate(this.props.sort, updatedEvent)
@@ -74,7 +87,7 @@
 					return (
 						<div>
 							<form>
-								<input placeholder="Datetime" value={this.props.event.datetime} onChange={this.datetimeChanged} />
+								<Datetime utc inputProps={{ placeholder: 'Datetime'}} value={this.props.event.datetime} onChange={this.datetimeChanged} />
 								<input placeholder="Note" value={this.props.event.note} onChange={this.noteChanged} />
 							</form>
 						</div>
@@ -103,9 +116,9 @@
 					this.handleUpdate = this.handleUpdate.bind(this);
 				}
 
-				datetimeChanged(event) {
+				datetimeChanged(datetime) {
 					const newEvent = this.state.newEvent;
-					newEvent.datetime = event.target.value;
+					newEvent.datetime = datetime;
 					this.setState({newEvent: newEvent});
 				}
 
@@ -137,10 +150,12 @@
 					return (
 						<div>
 							<Chart events={this.state.events} />
+							<h2>Events</h2>
+							<p>Expects times in UTC</p>
 							{events}
 							<div>
 								<form onSubmit={this.handleSubmit}>
-									<input placeholder="Datetime" value={this.state.newEvent.datetime} onChange={this.datetimeChanged} />
+									<Datetime utc inputProps={{ placeholder: 'Datetime'}} value={this.state.newEvent.datetime} onChange={this.datetimeChanged} />
 									<input placeholder="Note" value={this.state.newEvent.note} onChange={this.noteChanged} />
 									<button type="submit">Add</button>
 								</form>
