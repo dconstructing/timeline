@@ -3,22 +3,23 @@
 	<head>
 		<title>Timeline basic demo</title>
 
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
 		<script src="https://unpkg.com/moment/moment.js"></script>
 		<script src="https://unpkg.com/timeline-plus/dist/timeline.js"></script>
 		<script src="https://unpkg.com/html2canvas/dist/html2canvas.js"></script>
+		<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 
 		<script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
 		<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
 		<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 		<script src="https://unpkg.com/react-datetime/dist/react-datetime.js"></script>
 
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.css" rel="stylesheet" type="text/css" />
 		<link href="https://unpkg.com/timeline-plus/dist/timeline.css" rel="stylesheet" type="text/css" />
 		<link href="https://unpkg.com/react-datetime/css/react-datetime.css" rel="stylesheet" type="text/css" />
 	</head>
 	<body>
-		<h1>Timeline Generator</h1>
-		<p>Enter your event details to automatically build a timeline. Red line represents current time in UTC.</p>
-
 		<div id="react"></div>
 
 		<script type="text/babel">
@@ -87,12 +88,26 @@
 
 				render() {
 					return (
-						<div>
-							<form>
-								<Datetime utc inputProps={{ placeholder: 'Datetime'}} value={this.props.event.datetime} onChange={this.datetimeChanged} />
-								<input placeholder="Note" value={this.props.event.note} onChange={this.noteChanged} />
-							</form>
-						</div>
+						<form>
+							<div className="field is-horizontal">
+								<div className="field">
+									<div className="control has-icons-left">
+										<Datetime utc inputProps={{ className: 'input', placeholder: 'Datetime'}} value={this.props.event.datetime} onChange={this.datetimeChanged} />
+										<span className="icon is-small is-left">
+											<i className="fas fa-calendar-alt"></i>
+										</span>
+									</div>
+								</div>
+								<div className="field">
+									<div className="control has-icons-left">
+										<input className="input" placeholder="Note" value={this.props.event.note} onChange={this.noteChanged} />
+										<span className="icon is-small is-left">
+											<i className="fas fa-user"></i>
+										</span>
+									</div>
+								</div>
+							</div>
+						</form>
 					)
 				}
 			}
@@ -164,17 +179,55 @@
 					const events = this.state.events.map((event, i) => <TimelineEvent key={i} sort={i} event={event} onUpdate={this.handleUpdate} />)
 					return (
 						<div>
-							<Chart events={this.state.events} />
-							<button onClick={this.handleExport}>Save as PNG</button>
-							<h2>Events</h2>
-							<p>Expects times in UTC</p>
-							{events}
-							<div>
-								<form onSubmit={this.handleSubmit}>
-									<Datetime utc inputProps={{ placeholder: 'Datetime'}} value={this.state.newEvent.datetime} onChange={this.datetimeChanged} />
-									<input placeholder="Note" value={this.state.newEvent.note} onChange={this.noteChanged} />
-									<button type="submit">Add</button>
-								</form>
+							<div className="section">
+								<div className="container">
+									<h1 className="title">Timeline Generator</h1>
+									<p className="subtitle">Enter your event details to automatically build a timeline. Red line represents current time in UTC.</p>
+									<Chart events={this.state.events} />
+									<button className="button is-primary is-outlined" onClick={this.handleExport}>
+										<span class="icon is-small">
+											<i class="fas fa-file-download"></i>
+										</span>
+										<span>Save as PNG</span>
+									</button>
+								</div>
+							</div>
+							<div className="section">
+								<div className="container">
+									<h2 className="title is-2">Events</h2>
+									<p className="subtitle">Expects times in UTC</p>
+									{events}
+									<form onSubmit={this.handleSubmit}>
+										<div className="field is-horizontal">
+											<div className="field">
+												<div className="control has-icons-left">
+													<Datetime utc inputProps={{ className: 'input', placeholder: 'Datetime'}} value={this.state.newEvent.datetime} onChange={this.datetimeChanged} />
+													<span className="icon is-small is-left">
+														<i className="fas fa-calendar-alt"></i>
+													</span>
+												</div>
+											</div>
+											<div className="field">
+												<div className="control has-icons-left">
+													<input className="input" placeholder="Note" value={this.state.newEvent.note} onChange={this.noteChanged} />
+													<span className="icon is-small is-left">
+														<i className="fas fa-user"></i>
+													</span>
+												</div>
+											</div>
+											<div className="field">
+												<div className="control">
+													<button className="button is-primary" type="submit">
+														<span class="icon is-small">
+															<i class="fas fa-plus-circle"></i>
+														</span>
+														<span>Add</span>
+													</button>
+												</div>
+											</div>
+										</div>
+									</form>
+								</div>
 							</div>
 						</div>
 					)
