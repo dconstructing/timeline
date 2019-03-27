@@ -1,0 +1,30 @@
+{
+  "name": "timeline",
+  "version": "1.0.0",
+  "description": "Web app for generating quick timelines, found at https://dconstructing.github.io/timeline/",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "parcel build src/app.js",
+    "dev": "parcel index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dconstructing/timeline.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dconstructing/timeline/issues"
+  },
+  "homepage": "https://github.com/dconstructing/timeline#readme",
+  "devDependencies": {
+    "html2canvas": "^1.0.0-alpha.12",
+    "parcel-bundler": "^1.12.3",
+    "react": "^16.8.5",
+    "react-datetime": "^2.16.3",
+    "react-dom": "^16.8.5",
+    "timeline-plus": "^2.3.6"
+  },
+  "dependencies": {}
+}
